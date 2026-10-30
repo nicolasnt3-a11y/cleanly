@@ -1,0 +1,96 @@
+# Configuration electron-builder (v26) pour Cleanly.
+# Build local : npm run dist:win / npm run dist:mac
+# Build CI    : .github/workflows/release.yml (sur push d'un tag v*)
+appId: app.cleanly.desktop
+productName: Cleanly
+copyright: Copyright © 2026 Cleanly
+
+directories:
+  output: release
+  buildResources: build
+
+# Seul le résultat compilé est embarqué (+ package.json et les node_modules de
+# production : @anthropic-ai/sdk, openai, iconv-lite, ajoutés automatiquement).
+files:
+  - dist/**/*
+  - package.json
+  - "!**/*.map"
+  - "!**/node_modules/**/*.d.ts"
+  - "!**/node_modules/**/*.d.mts"
+  - "!**/node_modules/**/*.d.cts"
+  - "!**/node_modules/**/{CHANGELOG.md,README.md,readme.md,HISTORY.md}"
+  - "!**/node_modules/**/{test,tests,__tests__,docs,example,examples}/**"
+
+asar: true
+# Aucune dépendance native : inutile de recompiler quoi que ce soit.
+npmRebuild: false
+nodeGypRebuild: false
+# Pas de publication automatique : la CI crée la release GitHub elle-même.
+publish: null
+
+# Fusibles Electron (verrouillage du binaire).
+electronFuses:
+  runAsNode: false
+  enableCookieEncryption: true
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  enableEmbeddedAsarIntegrityValidation: true
+  onlyLoadAppFromAsar: true
+  # grantFileProtocolExtraPrivileges : laissé par défaut (index.html chargé via file://).
+
+# ---------------------------------------------------------------- Windows ----
+win:
+  icon: build/icon.ico
+  executableName: Cleanly
+  # Pas de certificat de signature de code pour l'instant (SmartScreen avertira).
+  signAndEditExecutable: true
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+
+nsis:
+  artifactName: Cleanly-Setup-${version}.${ext}
+  oneClick: false            # installateur assisté
+  perMachine: false          # installation par utilisateur (pas d'UAC)
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Cleanly
+  uninstallDisplayName: Cleanly
+  multiLanguageInstaller: true
+  installerLanguages: [fr_FR, en_US]
+  displayLanguageSelector: false   # langue choisie d'après celle du système
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
+
+portable:
+  artifactName: Cleanly-${version}-portable.${ext}
+
+# ------------------------------------------------------------------ macOS ----
+mac:
+  icon: build/icon.icns
+  category: public.app-category.utilities
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+  artifactName: Cleanly-${version}-mac-${arch}.${ext}
+  # Signature ad hoc (pas encore de compte Apple Developer) : « - » force la
+  # signature ad hoc, indispensable sur Apple Silicon. Runtime renforcé désactivé
+  # (incompatible avec l'ad hoc sans entitlement disable-library-validation).
+  identity: "-"
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  notarize: false
+  darkModeSupport: true
+  minimumSystemVersion: "12.0"
+
+dmg:
+  artifactName: Cleanly-${version}-mac-${arch}.${ext}
+  title: Cleanly ${version}

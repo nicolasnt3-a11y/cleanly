@@ -65,11 +65,18 @@ export async function runSmartScan(): Promise<void> {
     for (const c of result.categories) selected[c.id] = c.defaultSelected && !c.error && c.sizeBytes > 0;
     scanStore.set({ status: 'done', result, selected, excluded: {} });
   } catch (err) {
+    // Une annulation volontaire n'est pas une erreur : cancelSmartScan a déjà fixé l'état.
+    if (cancelRequested) return;
     scanStore.set((s) => ({ status: s.result ? 'done' : 'error', error: errorMessage(err) }));
+  } finally {
+    cancelRequested = false;
   }
 }
 
+let cancelRequested = false;
+
 export async function cancelSmartScan(): Promise<void> {
+  cancelRequested = true;
   await call('scan:cancel');
   scanStore.set((s) => ({ status: s.result ? 'done' : 'idle' }));
 }

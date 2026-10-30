@@ -1,0 +1,560 @@
+/* Accueil « Smart Scan » — concept C, minimaliste. Aucun backdrop-filter (fond WebGL dessous). */
+
+.hm {
+  gap: 24px;
+}
+.hm-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Haut : héros + mini-carte ── */
+.hm-top {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 420px);
+  gap: 40px;
+  align-items: stretch;
+}
+.hm-hero {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+.hm-h1 {
+  margin-top: 18px;
+  max-width: 620px;
+  font-size: clamp(44px, 7.4vh, 60px);
+}
+
+.hm-big {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-top: 14px;
+  white-space: nowrap;
+}
+.hm-num {
+  font-size: clamp(112px, 21vh, 168px);
+  margin-left: -0.05em;
+}
+.hm-unit {
+  font-size: clamp(32px, 5.5vh, 44px);
+}
+.hm-subline {
+  margin-top: 16px;
+  max-width: 560px;
+}
+
+.hm-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+.hm-ghost {
+  height: 54px;
+  padding: 0 26px;
+  font-size: 15px;
+  background: transparent;
+}
+.hm-ghost:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+.hm-note {
+  margin: 16px 0 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.hm-note.bad {
+  color: var(--bad);
+}
+
+/* Progression */
+.hm-progress {
+  margin-top: 24px;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hm-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 16px;
+}
+.hm-path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+
+/* Bilan */
+.hm-facts {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 600px;
+}
+.hm-facts li {
+  position: relative;
+  padding-left: 16px;
+  font: 400 12px/1.45 var(--font-mono);
+  color: var(--ink-3);
+}
+.hm-facts li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 6px;
+  height: 1px;
+  background: var(--ink-3);
+}
+.hm-facts li.bad {
+  color: var(--bad);
+}
+
+/* ── Mini-carte ── */
+.hm-map {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px;
+  background: linear-gradient(180deg, #fff, var(--surface-2));
+}
+.hm-map-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hm-map-title {
+  margin-top: 4px;
+  font: 400 17px/1.2 var(--font-display);
+  letter-spacing: -0.02em;
+}
+.hm-map-head .mono {
+  margin-top: 1px;
+  white-space: nowrap;
+}
+.hm-bubbles {
+  flex: 1;
+  min-height: 90px;
+  position: relative;
+  transition: opacity 0.4s;
+}
+.hm-bubbles.pending {
+  opacity: 0.55;
+}
+.hm-bubbles svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hm-bubble {
+  animation: hm-float 8s ease-in-out infinite alternate;
+}
+.hm-bubble circle {
+  fill: #fff;
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition:
+    cx 0.6s var(--ease-spring),
+    cy 0.6s var(--ease-spring),
+    r 0.6s var(--ease-spring);
+}
+.hm-bubble circle.hero {
+  fill: var(--accent-soft);
+  stroke: rgba(36, 71, 214, 0.55);
+}
+.hm-bubble circle.accent {
+  fill: var(--accent);
+  stroke: none;
+}
+.hm-bubble-l,
+.hm-bubble-v {
+  text-anchor: middle;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+.hm-bubble-l {
+  font-size: 8.5px;
+  text-transform: uppercase;
+  fill: var(--ink-3);
+}
+.hm-bubble-v {
+  font-size: 11px;
+  fill: var(--ink);
+}
+@keyframes hm-float {
+  from {
+    transform: translateY(-2.5px);
+  }
+  to {
+    transform: translateY(2.5px);
+  }
+}
+
+.hm-map-bar {
+  height: 6px;
+  flex: none;
+}
+.hm-map-bar i {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  transition: width 0.6s ease;
+}
+.hm-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 20px;
+}
+.hm-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  min-width: 0;
+}
+.hm-legend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  flex: none;
+}
+.hm-legend i.free {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hm-legend-l {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hm-legend-v {
+  font: 400 11.5px var(--font-mono);
+  color: var(--ink);
+}
+
+/* ── Bandeau de cartes ── */
+.hm-cards {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.hm-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 150px;
+  height: clamp(140px, 22vh, 172px);
+  padding: 18px 22px 18px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(180deg, #fff, var(--surface-2));
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.hm-card:hover {
+  background: linear-gradient(180deg, #fbfcff, #f3f5fd);
+}
+.hm-card:focus-visible {
+  outline-offset: -3px;
+}
+.hm-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hm-card-top .ic {
+  color: var(--ink);
+}
+.hm-card-value {
+  margin-top: auto;
+  font: 300 34px/1 var(--font-display);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.3s;
+}
+.hm-card-unit {
+  margin-left: 6px;
+  font: 400 13px var(--font-ui);
+  letter-spacing: -0.01em;
+  color: var(--ink-3);
+}
+.hm-card-sub {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 64px);
+}
+.hm-cards.busy .hm-card-value {
+  opacity: 0.4;
+}
+
+/* Décors animés (discrets, coin inférieur droit) */
+.hm-deco {
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Nettoyage : particules qui montent */
+.hm-particles {
+  right: 18px;
+  bottom: 14px;
+  width: 60px;
+  height: 70px;
+}
+.hm-particles i {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  animation: hm-rise 4.2s ease-in infinite;
+}
+.hm-particles i:nth-child(1) { left: 6px; animation-delay: 0s; }
+.hm-particles i:nth-child(2) { left: 18px; animation-delay: -0.7s; width: 2px; height: 2px; }
+.hm-particles i:nth-child(3) { left: 28px; animation-delay: -1.5s; }
+.hm-particles i:nth-child(4) { left: 38px; animation-delay: -2.3s; width: 2px; height: 2px; }
+.hm-particles i:nth-child(5) { left: 47px; animation-delay: -3.1s; }
+.hm-particles i:nth-child(6) { left: 13px; animation-delay: -3.7s; width: 2px; height: 2px; }
+.hm-particles i:nth-child(7) { left: 54px; animation-delay: -1.1s; width: 2px; height: 2px; }
+@keyframes hm-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(-64px);
+    opacity: 0;
+  }
+}
+
+/* Vitesse : curseur liquide */
+.hm-slider {
+  right: 22px;
+  bottom: 24px;
+  width: 64px;
+  height: 14px;
+}
+.hm-slider-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+.hm-slider-knob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  animation:
+    hm-slide 4.8s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate,
+    hm-liquid 2.4s ease-in-out infinite;
+}
+@keyframes hm-slide {
+  from {
+    left: 0;
+  }
+  to {
+    left: calc(100% - 14px);
+  }
+}
+@keyframes hm-liquid {
+  0%,
+  100% {
+    border-radius: 50%;
+    transform: scale(1, 1);
+  }
+  30% {
+    border-radius: 58% 42% 46% 54% / 46% 56% 44% 54%;
+    transform: scale(1.18, 0.86);
+  }
+  60% {
+    border-radius: 44% 56% 58% 42% / 56% 44% 56% 44%;
+    transform: scale(0.92, 1.08);
+  }
+}
+
+/* Protection : halo flottant */
+.hm-glow {
+  right: -18px;
+  bottom: -26px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(36, 71, 214, 0.16), rgba(36, 71, 214, 0.05) 55%, transparent);
+  animation: hm-glow 7s ease-in-out infinite alternate;
+}
+@keyframes hm-glow {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: translate(-14px, -10px) scale(1.12);
+    opacity: 1;
+  }
+}
+
+/* Applications : tuiles qui ondulent */
+.hm-tiles {
+  right: 22px;
+  bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 12px);
+  gap: 4px;
+}
+.hm-tiles i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  animation: hm-bob 2.8s ease-in-out infinite;
+}
+.hm-tiles i:nth-child(1) {
+  background: var(--accent-soft);
+  border-color: rgba(36, 71, 214, 0.5);
+}
+.hm-tiles i:nth-child(2) { animation-delay: -0.7s; }
+.hm-tiles i:nth-child(3) { animation-delay: -1.4s; }
+.hm-tiles i:nth-child(4) { animation-delay: -2.1s; }
+@keyframes hm-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* ── Résumé avant nettoyage (dans la boîte de dialogue) ── */
+.hm-sum ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.hm-sum li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  padding: 10px 14px;
+}
+.hm-sum li + li {
+  border-top: 1px solid var(--line-soft);
+}
+.hm-sum-k {
+  font-weight: 500;
+  color: var(--ink);
+  font-size: 13.5px;
+}
+.hm-sum-v {
+  font: 400 13px var(--font-mono);
+  color: var(--ink);
+}
+.hm-sum-d {
+  grid-column: 1 / -1;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.hm-sum-note {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+
+/* ── Fenêtres compactes ── */
+@media (max-width: 1120px) {
+  .hm-top {
+    gap: 28px;
+  }
+  .hm-card {
+    padding: 16px 18px;
+  }
+  .hm-card-value {
+    font-size: 30px;
+  }
+}
+@media (max-height: 720px) {
+  .hm {
+    padding-top: 24px;
+    padding-bottom: 24px;
+    gap: 20px;
+  }
+  .hm-actions {
+    margin-top: 20px;
+  }
+  .hm-ghost {
+    height: 48px;
+  }
+  .hm .capsule {
+    height: 48px;
+  }
+  .hm-map {
+    padding: 18px 20px;
+    gap: 12px;
+  }
+}
