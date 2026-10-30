@@ -1,0 +1,147 @@
+/* Coquille : barre supérieure + zone de contenu. */
+.shell {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  position: relative;
+  z-index: 2;
+  height: var(--topbar-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px 0 28px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-app-region: drag;
+}
+/* Windows : laisser la place aux boutons de fenêtre (titleBarOverlay). */
+html.platform-win32 .topbar {
+  padding-right: 150px;
+}
+/* macOS : laisser la place aux feux tricolores. */
+html.platform-darwin .topbar {
+  padding-left: 92px;
+}
+.topbar button {
+  -webkit-app-region: no-drag;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+.brand-name {
+  font: 600 17px var(--font-ui);
+  letter-spacing: -0.02em;
+}
+
+.mainnav {
+  display: flex;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+.nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--topbar-h);
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: 500 14px var(--font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav:hover {
+  color: var(--ink);
+}
+.nav.on {
+  color: var(--ink);
+}
+.nav.on::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -1px;
+  height: 2px;
+  background: var(--ink);
+}
+.nav.on .ic {
+  color: var(--accent);
+}
+
+.topbar-r {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+.topbar-r .icon-btn.on {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.drivemini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 10px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+.drivemini:hover {
+  background: rgba(14, 15, 18, 0.04);
+}
+.drivemini-bar {
+  width: 80px;
+  height: 4px;
+  border-radius: 9px;
+  background: rgba(14, 15, 18, 0.08);
+  overflow: hidden;
+}
+.drivemini-bar i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+}
+
+@media (max-width: 1180px) {
+  .drivemini {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .nav span {
+    display: none;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  animation: cl-fade-in 0.25s ease;
+}
+@keyframes cl-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

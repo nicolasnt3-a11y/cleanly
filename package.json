@@ -1,0 +1,50 @@
+{
+  "name": "cleanly",
+  "productName": "Cleanly",
+  "version": "0.1.0",
+  "description": "Un nettoyeur de disque élégant et sûr pour Windows et macOS.",
+  "author": "Cleanly",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "dev": "node scripts/build-main.mjs --dev && concurrently -k \"vite --config vite.config.ts\" \"node scripts/build-main.mjs --watch\" \"node scripts/run-electron.mjs\"",
+    "demo": "vite --config vite.config.ts --mode demo",
+    "typecheck": "tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "build:main": "node scripts/build-main.mjs",
+    "build:renderer": "vite build --config vite.config.ts",
+    "build": "npm run build:main && npm run build:renderer",
+    "start": "electron .",
+    "icons": "node scripts/make-icons.mjs",
+    "dist": "npm run build && electron-builder --config electron-builder.yml",
+    "dist:win": "npm run build && electron-builder --config electron-builder.yml --win",
+    "dist:mac": "npm run build && electron-builder --config electron-builder.yml --mac"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "iconv-lite": "^0.7.3",
+    "openai": "^7.45.1"
+  },
+  "devDependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  },
+  "allowScripts": {
+    "electron@45.1.0": true,
+    "electron-winstaller@5.4.0": true,
+    "esbuild@0.28.2": true
+  }
+}
