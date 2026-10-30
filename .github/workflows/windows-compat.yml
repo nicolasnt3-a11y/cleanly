@@ -1,0 +1,46 @@
+name: Windows Compatibility & Electron Watch
+
+on:
+  # Exécution hebdomadaire chaque lundi à 07h00 UTC pour détecter tout changement
+  # dans les dernières builds de Windows Server / Windows 11 sur GitHub Actions.
+  schedule:
+    - cron: "0 7 * * 1"
+  # Exécution manuelle à la demande depuis l'onglet Actions de GitHub.
+  workflow_dispatch:
+  # Exécution automatique lorsqu'une Pull Request met à jour Electron ou les services Windows.
+  pull_request:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "src/main/**"
+      - "scripts/verify-windows-compat.mjs"
+      - ".github/workflows/windows-compat.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-windows:
+    name: Sondes Windows & Garde-fous (windows-latest)
+    runs-on: windows-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Vérification du typage TypeScript
+        run: npm run typecheck
+
+      - name: Build complet (main + preload + renderer)
+        run: npm run build
+
+      - name: Exécution des sondes Windows réelles & tests de sécurité
+        run: npm run verify

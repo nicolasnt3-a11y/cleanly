@@ -1,0 +1,40 @@
+# Mise à jour automatique d'Electron, des dépendances npm et des workflows GitHub Actions.
+# Chaque Pull Request ouverte par Dependabot déclenche automatiquement la suite de
+# tests Windows (`.github/workflows/windows-compat.yml`) pour garantir que la nouvelle
+# version d'Electron fonctionne sans régression sur la dernière image Windows.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    groups:
+      electron:
+        patterns:
+          - "electron"
+          - "electron-builder"
+      frontend-tooling:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/*"
+          - "vite"
+          - "@vitejs/*"
+          - "typescript"
+          - "esbuild"
+      ai-sdks:
+        patterns:
+          - "@anthropic-ai/sdk"
+          - "openai"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Paris"
