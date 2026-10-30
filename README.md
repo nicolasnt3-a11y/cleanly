@@ -6,12 +6,12 @@
 
 <p align="center">
   Un nettoyeur de disque élégant et sûr pour Windows et macOS.<br>
-  <a href="https://github.com/OWNER/cleanly/releases/latest">Télécharger la dernière version</a>
+  <a href="https://github.com/nicolasnt3-a11y/cleanly/releases/latest">Télécharger la dernière version</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/OWNER/cleanly/actions/workflows/ci.yml"><img src="https://github.com/OWNER/cleanly/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/OWNER/cleanly/releases/latest"><img src="https://img.shields.io/github/v/release/OWNER/cleanly" alt="Release"></a>
+  <a href="https://github.com/nicolasnt3-a11y/cleanly/actions/workflows/ci.yml"><img src="https://github.com/nicolasnt3-a11y/cleanly/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/nicolasnt3-a11y/cleanly/releases/latest"><img src="https://img.shields.io/github/v/release/nicolasnt3-a11y/cleanly" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue" alt="Licence MIT"></a>
 </p>
 

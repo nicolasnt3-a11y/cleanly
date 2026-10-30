@@ -25,13 +25,13 @@ import type {
 
 /* ═══════════════════════════ À CONFIGURER ═══════════════════════════ */
 
-/** Dépôt GitHub qui reçoit les retours (formulaire « nouvelle issue » pré-rempli). À CONFIGURER. */
-export const FEEDBACK_REPO = 'https://github.com/cleanly-app/cleanly';
+/** Dépôt GitHub qui reçoit les retours (formulaire « nouvelle issue » pré-rempli). */
+export const FEEDBACK_REPO = 'https://github.com/nicolasnt3-a11y/cleanly';
 
-/** Liens de soutien (HTTPS uniquement). À CONFIGURER. */
+/** Liens de soutien (HTTPS uniquement). */
 export const TIP_LINKS = {
   coffee: 'https://ko-fi.com/cleanly',
-  sponsor: 'https://github.com/sponsors/cleanly-app',
+  sponsor: 'https://github.com/sponsors/nicolasnt3-a11y',
 } as const;
 
 /* ═════════════════════════════════════════════════════════════════════ */

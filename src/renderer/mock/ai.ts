@@ -113,7 +113,7 @@ export function createAiMocks(_ctx: MockContext): MockHandlers {
         id: 'sponsor',
         label: 'Parrainer sur GitHub',
         description: 'Un soutien mensuel qui finance les certificats de signature et le temps de développement.',
-        url: 'https://github.com/sponsors/cleanly-app',
+        url: 'https://github.com/sponsors/nicolasnt3-a11y',
       },
     ],
   };
