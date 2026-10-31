@@ -1,7 +1,7 @@
 {
   "name": "cleanly",
   "productName": "Cleanly",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Un nettoyeur de disque élégant et sûr pour Windows et macOS.",
   "author": "Cleanly",
   "license": "MIT",

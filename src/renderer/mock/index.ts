@@ -17,7 +17,7 @@ export interface MockContext {
 
 const info: AppInfo = {
   name: 'Cleanly',
-  version: '0.1.0',
+  version: '0.2.0',
   platform: 'win32',
   arch: 'x64',
   osLabel: 'Windows 11 Pro 24H2',
