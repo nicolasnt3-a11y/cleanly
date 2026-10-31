@@ -21,7 +21,8 @@ const entryCode = `
 export * from ${JSON.stringify(path.join(rootDir, 'src/main/safety/index.ts'))};
 export { formatWindowsLabel } from ${JSON.stringify(path.join(rootDir, 'src/main/services/system/os-label.ts'))};
 export { osLabel, protectionReport, listStartupItems, listInstalledApps } from ${JSON.stringify(path.join(rootDir, 'src/main/services/system/index.ts'))};
-export { listDrives, scanCleanupCategories } from ${JSON.stringify(path.join(rootDir, 'src/main/services/scan/index.ts'))};
+export { listDrives, scanCleanupCategories, runStartupClean } from ${JSON.stringify(path.join(rootDir, 'src/main/services/scan/index.ts'))};
+export { DEFAULT_SETTINGS, STARTUP_CLEAN_ARG } from ${JSON.stringify(path.join(rootDir, 'src/main/services/settings/index.ts'))};
 `;
 
 const electronStubPlugin = {
@@ -38,9 +39,16 @@ const electronStubPlugin = {
           openPath: async () => ''
         };
         export const app = {
+          isPackaged: false,
           getName: () => 'Cleanly',
           getPath: () => '',
-          getFileIcon: async () => ({ isEmpty: () => true, toDataURL: () => '' })
+          getFileIcon: async () => ({ isEmpty: () => true, toDataURL: () => '' }),
+          setLoginItemSettings: () => {}
+        };
+        export const safeStorage = {
+          isEncryptionAvailable: () => false,
+          encryptString: () => Buffer.alloc(0),
+          decryptString: () => ''
         };
       `,
       loader: 'js',
@@ -166,6 +174,23 @@ try {
     assert(
       Array.isArray(scanRes.categories) && scanRes.categories.length >= 8,
       `Analyse des catégories (lecture seule) active : ${scanRes.categories?.length} catégories analysées`,
+    );
+
+    assert(
+      mod.DEFAULT_SETTINGS.autoCleanOnStartup === true && mod.STARTUP_CLEAN_ARG === '--startup-clean',
+      `Configuration du nettoyage automatique au démarrage valide (${mod.STARTUP_CLEAN_ARG})`,
+    );
+
+    const abortedCtrl = new AbortController();
+    abortedCtrl.abort();
+    const dryStartupClean = await mod.runStartupClean({
+      signal: abortedCtrl.signal,
+      progress: () => {},
+      settings: async () => mod.DEFAULT_SETTINGS,
+    });
+    assert(
+      typeof dryStartupClean.freedBytes === 'number' && dryStartupClean.freedBytes === 0,
+      'Service runStartupClean (simulation sans écriture) opérationnel',
     );
   }
 

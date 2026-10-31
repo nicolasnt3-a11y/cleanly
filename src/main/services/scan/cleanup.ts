@@ -548,3 +548,28 @@ export async function runClean(req: CleanRequest, ctx: ServiceContext): Promise<
   ctx.progress({ task: 'clean', phase: 'deleting', fraction: 1, bytesFound: t.freed, itemsVisited: t.deleted + t.trashed });
   return result();
 }
+
+/**
+ * Analyse puis nettoie silencieusement les catégories sûres cochées par défaut (`defaultSelected`).
+ * Utilisé lors du lancement automatique à l'ouverture de session (`--startup-clean`).
+ * Ne touche jamais à la Corbeille ni aux anciens téléchargements, et respecte la règle des 24 h.
+ */
+export async function runStartupClean(ctx: ServiceContext): Promise<CleanResult> {
+  const { scanId, categories } = await scanCleanupCategories(ctx);
+  const categoryIds = categories
+    .filter((c) => c.defaultSelected && !c.error && c.sizeBytes > 0)
+    .map((c) => c.id);
+  if (categoryIds.length === 0) {
+    return {
+      freedBytes: 0,
+      deletedCount: 0,
+      trashedCount: 0,
+      lockedCount: 0,
+      recentSkippedCount: 0,
+      unsafeRejectedCount: 0,
+      needsAdminCategoryIds: [],
+      errors: [],
+    };
+  }
+  return runClean({ scanId, categoryIds }, ctx);
+}

@@ -6,7 +6,7 @@
 import type { DriveInfo } from '../../../../shared/types';
 import { getDrives } from '../../safety/drives';
 
-export { scanCleanupCategories, runClean } from './cleanup';
+export { scanCleanupCategories, runClean, runStartupClean } from './cleanup';
 export { diskBreakdown, spaceLevel } from './spacemap';
 export { findLargeFiles, findDuplicates, trashItems, resolveScanItemPath } from './files';
 

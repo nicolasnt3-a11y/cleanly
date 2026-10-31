@@ -6,14 +6,20 @@ import { app, BrowserWindow, Menu, session, shell, nativeTheme } from 'electron'
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { registerIpc } from './ipc';
+import * as scan from './services/scan/index';
+import * as settings from './services/settings/index';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const preloadPath = path.join(here, '..', 'preload', 'preload.cjs');
 const indexHtml = path.join(here, '..', 'renderer', 'index.html');
 const devServerUrl = process.env.CLEANLY_DEV ? process.env.VITE_DEV_SERVER_URL : undefined;
+const isStartupClean = process.argv.includes(settings.STARTUP_CLEAN_ARG);
 
 app.enableSandbox();
 nativeTheme.themeSource = 'light';
+if (process.platform === 'win32') {
+  app.setAppUserModelId('Cleanly');
+}
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -80,7 +86,7 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
-void app.whenReady().then(() => {
+void app.whenReady().then(async () => {
   // Aucune permission web (caméra, notifications, géolocalisation…).
   session.defaultSession.setPermissionRequestHandler((_wc, _perm, cb) => cb(false));
   session.defaultSession.setPermissionCheckHandler(() => false);
@@ -93,15 +99,46 @@ void app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
   }
 
-  let win = createWindow();
-  app.on('second-instance', () => {
-    if (win.isDestroyed()) return;
+  let win: BrowserWindow | null = null;
+
+  app.on('second-instance', (_event, commandLine) => {
+    if (commandLine.includes(settings.STARTUP_CLEAN_ARG)) return;
+    if (!win || win.isDestroyed()) {
+      win = createWindow();
+      return;
+    }
     if (win.isMinimized()) win.restore();
     win.focus();
   });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) win = createWindow();
   });
+
+  const currentSettings = await settings.getSettings().catch(() => settings.DEFAULT_SETTINGS);
+  settings.syncStartupRegistration(currentSettings.autoCleanOnStartup);
+
+  if (isStartupClean) {
+    // Lancement silencieux à l'ouverture de session : nettoyage des catégories sûres puis fermeture.
+    try {
+      if (currentSettings.autoCleanOnStartup) {
+        await scan.runStartupClean({
+          signal: new AbortController().signal,
+          progress: () => {},
+          settings: () => settings.getSettings(),
+        });
+      }
+    } catch (err) {
+      console.error('[startup-clean]', err);
+    } finally {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        app.quit();
+      }
+    }
+    return;
+  }
+
+  win = createWindow();
 });
 
 app.on('window-all-closed', () => {

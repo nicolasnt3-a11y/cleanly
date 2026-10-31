@@ -25,6 +25,9 @@ sans votre confirmation.
 
 - **Analyse intelligente** : un seul bouton pour passer en revue le nettoyage, les applications,
   le démarrage et la protection.
+- **Nettoyage automatique au démarrage** : se lance en arrière-plan à l'ouverture de session
+  Windows pour nettoyer silencieusement les caches et fichiers temporaires de plus de 24 h, puis
+  se referme (activé par défaut, désactivable dans les Paramètres).
 - **Nettoyage** : fichiers temporaires, caches des navigateurs et des applications, rapports de
   plantage, résidus de Windows Update, caches de développement (npm, pip, Yarn, Xcode
   DerivedData…), journaux macOS, Corbeille, anciens téléchargements.

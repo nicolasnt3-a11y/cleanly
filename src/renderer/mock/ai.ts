@@ -42,6 +42,7 @@ export function createAiMocks(_ctx: MockContext): MockHandlers {
     oldDownloadsDays: 90,
     largeFileMinMb: 100,
     confirmBeforeClean: true,
+    autoCleanOnStartup: true,
   };
   return {
     'settings:get': async () => settings,

@@ -322,6 +322,22 @@ function CleaningSection({ settings, save }: { settings: Settings; save: SaveFn 
     <Section eyebrow="Règles" title="Nettoyage">
       <div className="pref">
         <div className="pref-text">
+          <span className="pref-title">Nettoyage automatique au démarrage</span>
+          <span className="small">
+            Lance Cleanly en arrière-plan à l’ouverture de session pour nettoyer automatiquement les caches et fichiers
+            temporaires de plus de 24 h, puis referme l’application.
+          </span>
+        </div>
+        <div className="pref-ctrl">
+          <Toggle
+            label="Nettoyage automatique au démarrage"
+            on={settings.autoCleanOnStartup}
+            onChange={(v) => void save({ autoCleanOnStartup: v })}
+          />
+        </div>
+      </div>
+      <div className="pref">
+        <div className="pref-text">
           <span className="pref-title">Anciens téléchargements</span>
           <span className="small">
             Un fichier du dossier Téléchargements est proposé s’il n’a pas été modifié depuis ce nombre de jours (30 au

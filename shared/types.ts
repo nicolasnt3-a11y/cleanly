@@ -452,10 +452,15 @@ export interface Settings {
   largeFileMinMb: number;
   /** Demander confirmation avant chaque nettoyage. */
   confirmBeforeClean: boolean;
+  /** Lancer Cleanly au démarrage de la session et effectuer un nettoyage automatique en arrière-plan. */
+  autoCleanOnStartup: boolean;
 }
 
 export type SettingsPatch = Partial<
-  Pick<Settings, 'aiProvider' | 'aiModel' | 'motion' | 'oldDownloadsDays' | 'largeFileMinMb' | 'confirmBeforeClean'>
+  Pick<
+    Settings,
+    'aiProvider' | 'aiModel' | 'motion' | 'oldDownloadsDays' | 'largeFileMinMb' | 'confirmBeforeClean' | 'autoCleanOnStartup'
+  >
 >;
 
 export interface SetApiKeyRequest {

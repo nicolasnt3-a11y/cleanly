@@ -36,6 +36,9 @@ export const TIP_LINKS = {
 
 /* ═════════════════════════════════════════════════════════════════════ */
 
+/** Argument passé à l'exécutable lors de l'ouverture de session pour un nettoyage silencieux. */
+export const STARTUP_CLEAN_ARG = '--startup-clean';
+
 export const DEFAULT_SETTINGS: Settings = {
   aiProvider: null,
   aiModel: { anthropic: null, openai: null },
@@ -45,6 +48,7 @@ export const DEFAULT_SETTINGS: Settings = {
   oldDownloadsDays: 90,
   largeFileMinMb: 100,
   confirmBeforeClean: true,
+  autoCleanOnStartup: true,
 };
 
 const PROVIDERS: readonly AiProvider[] = ['anthropic', 'openai'];
@@ -85,6 +89,7 @@ function sanitize(raw: unknown): Stored {
     oldDownloadsDays: clampInt(o.oldDownloadsDays, 30, 3650, DEFAULT_SETTINGS.oldDownloadsDays),
     largeFileMinMb: clampInt(o.largeFileMinMb, 10, 100_000, DEFAULT_SETTINGS.largeFileMinMb),
     confirmBeforeClean: typeof o.confirmBeforeClean === 'boolean' ? o.confirmBeforeClean : DEFAULT_SETTINGS.confirmBeforeClean,
+    autoCleanOnStartup: typeof o.autoCleanOnStartup === 'boolean' ? o.autoCleanOnStartup : DEFAULT_SETTINGS.autoCleanOnStartup,
   };
 }
 
@@ -154,6 +159,24 @@ function compose(s: Stored, k: StoredKeys): Settings {
 
 /* ───────────────────────────── API publique ───────────────────────────── */
 
+/**
+ * Synchronise l'inscription de Cleanly au démarrage de la session (Windows Run / macOS Login Items).
+ * En mode portable sous Windows, utilise `PORTABLE_EXECUTABLE_FILE` pour pointer vers l'exécutable réel.
+ */
+export function syncStartupRegistration(enabled: boolean): void {
+  if (!app.isPackaged || typeof app.setLoginItemSettings !== 'function') return;
+  try {
+    const exePath = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
+    app.setLoginItemSettings({
+      openAtLogin: enabled,
+      path: exePath,
+      args: enabled ? [STARTUP_CLEAN_ARG] : [],
+    });
+  } catch {
+    /* Ignoré si le système refuse l'inscription au démarrage */
+  }
+}
+
 export async function getSettings(): Promise<Settings> {
   return compose(await loadStored(), await loadKeys());
 }
@@ -167,6 +190,9 @@ export async function updateSettings(patch: SettingsPatch): Promise<Settings> {
   });
   stored = next;
   await queueWrite(settingsFile(), next);
+  if ('autoCleanOnStartup' in patch) {
+    syncStartupRegistration(next.autoCleanOnStartup);
+  }
   return compose(next, await loadKeys());
 }
 

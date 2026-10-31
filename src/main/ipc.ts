@@ -96,6 +96,7 @@ function settingsPatch(v: unknown): SettingsPatch {
   if ('oldDownloadsDays' in o) p.oldDownloadsDays = int(o.oldDownloadsDays, 'oldDownloadsDays', 30, 3650);
   if ('largeFileMinMb' in o) p.largeFileMinMb = int(o.largeFileMinMb, 'largeFileMinMb', 10, 100_000);
   if ('confirmBeforeClean' in o) p.confirmBeforeClean = bool(o.confirmBeforeClean, 'confirmBeforeClean');
+  if ('autoCleanOnStartup' in o) p.autoCleanOnStartup = bool(o.autoCleanOnStartup, 'autoCleanOnStartup');
   return p;
 }
 
